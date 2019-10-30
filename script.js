@@ -122,6 +122,7 @@ function render() {
     //----------------------------------------------------------------------------------------------------
     // Dates
 
+    $(".dates").html("");
     const dStart = new Date(data.start);
     const dEnd = new Date(data.end);
     for (let index = 0; dEnd >= dStart; dStart.setDate(dStart.getDate() + 7), index++) {
@@ -142,6 +143,7 @@ function render() {
     //----------------------------------------------------------------------------------------------------
     // Items
 
+    $(".items").html("");
     let index = 0;
     let currentTop = -chartHeight;
     Object.keys(itemGroups).forEach(type => {
@@ -178,6 +180,7 @@ function render() {
     //----------------------------------------------------------------------------------------------------
     // Events
 
+    $(".events").html("");
     data.events.forEach(event => {
         const nDayPassed = (dEnd - new Date(event.date)) / (1000 * 60 * 60 * 24);
         const strStyle = `color: ${eventGroups[event.type].color}; left: calc(100.2% / ${nDays} * ${nDayPassed}); top: calc(1vh)`;
@@ -192,24 +195,33 @@ function render() {
     //----------------------------------------------------------------------------------------------------
     // Labels
 
+    $(".labels").html("");
     $(".labels").css("top", `calc(-${chartHeight}vh + 3vh)`);
-    Object.keys(colorOfType).forEach(type => {
+    Object.keys(colorOfType).forEach((type, index) => {
         const color = colorOfType[type];
         const strStyle = `
-        font-size: ${ITEM_FONT_SIZE}vh;
-        height: ${ITEM_HEIGHT}vh;
-        line-height: ${ITEM_HEIGHT}vh;
-        border-radius: ${ITEM_HEIGHT / 2}vh;
-        margin-bottom: ${GAP_ITEM_TYPE}vh;
-        background-color: ${color};
-    `;
+            font-size: ${ITEM_FONT_SIZE}vh;
+            height: ${ITEM_HEIGHT}vh;
+            line-height: ${ITEM_HEIGHT}vh;
+            border-radius: ${ITEM_HEIGHT / 2}vh;
+            margin-bottom: ${GAP_ITEM_TYPE}vh;
+            background-color: ${color};
+            top: ${(ITEM_HEIGHT + GAP_ITEM_TYPE) * index}vh;
+        `;
         $(".labels").append(`<div class="label-item" style="${strStyle}">${type}</div>`);
     });
-    Object.keys(eventGroups).forEach(type => {
+    Object.keys(eventGroups).forEach((type, index) => {
+        const strStyle = `
+            top: ${(ITEM_HEIGHT + GAP_ITEM_TYPE) * Object.keys(colorOfType).length + (ITEM_FONT_SIZE + GAP_ITEM_TYPE) * index}vh;
+            height: ${ITEM_FONT_SIZE}vh;
+            line-height: ${ITEM_FONT_SIZE}vh;
+        `;
         $(".labels").append(`
-        <div class="label-event">
+        <div class="label-event" style="${strStyle}">
             <span style="color: ${eventGroups[type].color}">${eventGroups[type].icon}</span> ${type}
         </div>
     `)
     });
 }
+
+render();
