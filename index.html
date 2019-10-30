@@ -10,7 +10,10 @@
 <body>
     <h1 id="title"></h1>
     <h2 id="subtitle"></h2>
-    <div id="chart">
+    <div class='additem' draggable="true" ondragstart="drag(event)">
+        Drag me!
+    </div>
+    <div id="chart" ondrop="dropnew(event)" ondragover="allowDrop(event), getCursorXY(event)">
         <div class="dates"></div>
         <div class="days"></div>
         <div class="items"></div>
@@ -20,5 +23,11 @@
 
     <script src="data/aise.js"></script>
     <script src="script.js"></script>
+    <script src="drag.js"></script>
+    
+    <input type="text" id="cursorX" size="3"> X-position of the mouse cursor
+    <br /><br />
+    <input type="text" id="cursorY" size="3"> Y-position of the mouse cursor
+
 </body>
 </html>
