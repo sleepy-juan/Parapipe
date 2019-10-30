@@ -20,8 +20,7 @@
 }
 
 #chart {
-    width: 80%;
-    height: 80%;
+    width: 100%;
 
     padding: 5vh 5vw 5vh 5vw;
     box-sizing: border-box;
@@ -44,6 +43,10 @@
     border-left: 0;
 }
 
+.day:last-child{
+    border-right: 0;
+}
+
 .day{
     border-left: 1px dashed #ddd;
     border-right: 1px dashed #ddd;
@@ -51,33 +54,18 @@
     width:100%;
 }
 
-.item{
+.items {
     position: relative;
+    width: 100%;
+    height: 0;
+}
+
+.item{
+    position: absolute;
     border-radius: 1.5vh;
 
     text-align: center;
-    line-height: 3vh;
     color: white;
-}
-
-.item[order="1"]{
-    width: calc(100% / 38 * 4);
-    height: 3vh;
-
-    left: 0;
-    top: -100%;
-
-    background-color: #ff000080;
-}
-
-.item[order="2"]{
-    width: calc(100% / 38 * 12);
-    height: 3vh;
-
-    left: calc(100% / 38 * 2);
-    top: calc(-100% - 3vh + 4vh);
-
-    background-color: #0000ff80;
 }
 
 .events{
@@ -88,16 +76,8 @@
 
 .event {
     font-size: 1em;
-    
     position: absolute;
-    top: calc(-3vh * 2 + 1vh);
-
     transform: translate(calc(-0.5em + 2px), 0);
-}
-
-.event[order="1"]{
-    color: #ff0000;
-    left: calc(100% / 38 * 0);
 }
 
 .event > div {
@@ -105,21 +85,6 @@
     transform: translate(calc(0.5em - 2px - 50%), 0);
     text-align: center;
     color: gray;
-}
-
-.event[order="2"]{
-    color: #0000ff;
-    left: calc(100% / 38 * 7);
-}
-
-.event[order="3"]{
-    color: #ff0000;
-    left: calc(100% / 38 * 14);
-}
-
-.event[order="4"]{
-    color: #0000ff;
-    left: calc(100% / 38 * 21);
 }
 
 .dates{
@@ -136,20 +101,4 @@
     top: -2vh;
 
     transform: translate(-50%, 0);
-}
-
-.date[order="1"]{
-    left: calc(100% / 38 * 0);
-}
-
-.date[order="2"]{
-    left: calc(100% / 38 * 7);
-}
-
-.date[order="3"]{
-    left: calc(100% / 38 * 14);
-}
-
-.date[order="4"]{
-    left: calc(100% / 38 * 21);
 }
