@@ -1,17 +1,22 @@
 const data = aise;
 
-/* initial size */
-$(".days").css("height", `${data.items.length * 4}vh`)
+//----------------------------------------------------------------------------------------------------
+// Title and Subtitle
 
-/* title and subtitle */
 $("#title").text(data.title);
 $("#subtitle").text(data.subtitle);
 
-/* days */
+//----------------------------------------------------------------------------------------------------
+// Days
+
+$(".days").css("height", `${data.items.length * 4}vh`)
+
 const nDays = (new Date(data.end) - new Date(data.start)) / (1000 * 60 * 60 * 24);
 $(".days").html(`<div class="day"></div>`.repeat(nDays));
 
-/* dates */
+//----------------------------------------------------------------------------------------------------
+// Dates
+
 const dStart = new Date(data.start);
 const dEnd = new Date(data.end);
 for (let index = 0; dEnd >= dStart; dStart.setDate(dStart.getDate() + 7), index++) {
@@ -29,7 +34,9 @@ if (dEnd != dStart) {
     $(".dates").append(`<div class="date" style="${strStyle}">${strTime}</div>`);
 }
 
-/* items */
+//----------------------------------------------------------------------------------------------------
+// Items
+
 data.items.forEach((item, index) => {
     const nLeft = Math.max((new Date(item.start) - new Date(data.start)) / (1000 * 60 * 60 * 24), 0);
     const nRight = (new Date(item.end) - new Date(data.start)) / (1000 * 60 * 60 * 24);
@@ -54,7 +61,9 @@ data.items.forEach((item, index) => {
     `)
 })
 
-/* events */
+//----------------------------------------------------------------------------------------------------
+// Events
+
 data.events.forEach(event => {
     const nDayPassed = (dEnd - new Date(event.date)) / (1000 * 60 * 60 * 24);
     const strStyle = `color: #0000ff; left: calc(100% / ${nDays} * ${nDayPassed}); top: calc(1vh)`;
