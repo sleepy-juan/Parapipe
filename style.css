@@ -22,7 +22,7 @@
 }
 
 #chart {
-    width: 100%;
+    width: 80%;
 
     padding: 5vh 5vw 5vh 5vw;
     box-sizing: border-box;
@@ -111,4 +111,21 @@
     /* margin-bottom:1vh; */
 
     transform: translate(-50%, 0);
+}
+
+.labels {
+    position: relative;
+    left: calc(100% + 3vw);
+    width: 20%;
+}
+
+.label-item {
+    width: 100%;
+    text-align: center;
+    color: white;
+}
+
+.label-event {
+    width: 100%;
+    color: black;
 }

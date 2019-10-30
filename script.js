@@ -13,12 +13,20 @@ const GAP_ITEM_TYPE = 1;
 const ITEM_HEIGHT = 3;
 const ITEM_FONT_SIZE = ITEM_HEIGHT / 2;
 
+const EVENT_COLORS = [
+    "#ff0000", "#00ff00", "#0000ff"
+].sort(function () { return 0.5 - Math.random() });
+const EVENT_ICONS = [
+    "&#9733", "&#9790", "&#9824", "&#9827", "&#9829", "&#9830"
+].sort(function () { return 0.5 - Math.random() });
+
 //----------------------------------------------------------------------------------------------------
-// Preprocessing
+// Preprocessing Items
 
 const nDays = (new Date(data.end) - new Date(data.start)) / (1000 * 60 * 60 * 24);
 
 let itemGroups = {};
+let colorOfType = {};
 let nContinued = 0;
 
 let parsedItems = data.items.map((item, id) => {
@@ -30,8 +38,8 @@ let parsedItems = data.items.map((item, id) => {
     const existsAfter = right >= nDays;
     const type = item.type;
     let isContinued = item.continue == "true";
-    const isSeparated = item.separate;
-    let color = null;
+    let isSeparated = item.separate;
+    let color = ITEM_COLORS[Object.keys(itemGroups).length % ITEM_COLORS.length];
 
     let group = type;
     if (isSeparated) {
@@ -40,6 +48,14 @@ let parsedItems = data.items.map((item, id) => {
             group = `${type}@${group_id}`;
             color = itemGroups[type].color;
         }
+        else {
+            isSeparated = false;
+            colorOfType[type] = color;
+        }
+    }
+    else {
+        isSeparated = false;
+        colorOfType[type] = color;
     }
     // or, ignore separation
 
@@ -51,7 +67,7 @@ let parsedItems = data.items.map((item, id) => {
         itemGroups[group] = {
             type,
             ids: [id],
-            color: color ? color : ITEM_COLORS[Object.keys(itemGroups).length % ITEM_COLORS.length],
+            color,
             _assignedSeparation: 0
         }
     }
@@ -63,6 +79,32 @@ let parsedItems = data.items.map((item, id) => {
     }
 });
 const chartHeight = ((parsedItems.length - nContinued) * (ITEM_HEIGHT + GAP_ITEM_ELEMENT) + (Object.keys(itemGroups).length - 1) * GAP_ITEM_TYPE);
+
+//----------------------------------------------------------------------------------------------------
+// Preprocessing Events
+
+let eventGroups = {};
+let parsedEvents = data.events.map((event, id) => {
+    const label = event.label;
+    const date = event.date;
+    const type = event.type;
+
+    if (Object.keys(eventGroups).includes(type)) {
+        eventGroups[type].ids.push(id);
+    }
+    else {
+        eventGroups[type] = {
+            type,
+            ids: [id],
+            color: EVENT_COLORS[Object.keys(eventGroups).length % EVENT_COLORS.length],
+            icon: EVENT_ICONS[Object.keys(eventGroups).length % EVENT_ICONS.length]
+        }
+    }
+
+    return {
+        label, date, type
+    }
+});
 
 //----------------------------------------------------------------------------------------------------
 // Title and Subtitle
@@ -137,11 +179,35 @@ Object.keys(itemGroups).forEach(type => {
 
 data.events.forEach(event => {
     const nDayPassed = (dEnd - new Date(event.date)) / (1000 * 60 * 60 * 24);
-    const strStyle = `color: #0000ff; left: calc(100.2% / ${nDays} * ${nDayPassed}); top: calc(1vh)`;
+    const strStyle = `color: ${eventGroups[event.type].color}; left: calc(100.2% / ${nDays} * ${nDayPassed}); top: calc(1vh)`;
     $(".events").append(`
         <div class="event" style="${strStyle}">
-            &#9733
+            ${eventGroups[event.type].icon}
             ${event.label ? `<div>${event.label}</div>` : ''}
         </div>
     `)
 })
+
+//----------------------------------------------------------------------------------------------------
+// Labels
+
+$(".labels").css("top", `calc(-${chartHeight}vh + 3vh)`);
+Object.keys(colorOfType).forEach(type => {
+    const color = colorOfType[type];
+    const strStyle = `
+        font-size: ${ITEM_FONT_SIZE}vh;
+        height: ${ITEM_HEIGHT}vh;
+        line-height: ${ITEM_HEIGHT}vh;
+        border-radius: ${ITEM_HEIGHT / 2}vh;
+        margin-bottom: ${GAP_ITEM_TYPE}vh;
+        background-color: ${color};
+    `;
+    $(".labels").append(`<div class="label-item" style="${strStyle}">${type}</div>`);
+});
+Object.keys(eventGroups).forEach(type => {
+    $(".labels").append(`
+        <div class="label-event">
+            <span style="color: ${eventGroups[type].color}">${eventGroups[type].icon}</span> ${type}
+        </div>
+    `)
+});
