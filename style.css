@@ -14,6 +14,7 @@
     margin-right:4.5vw;
     padding-bottom:2vh;
     border-bottom: 0.3vh solid #ddd;
+    margin-bottom: 2vh;
     box-sizing: content-box;
 
     font-weight: 100;
@@ -28,8 +29,8 @@
 }
 
 .days {
-    border-left: 0.2vw solid black;
-    border-right: 0.2vw solid black;
+    border-left: 0.1vw solid black;
+    border-right: 0.1vw solid black;
 
     display: flex;
     width:100%;
@@ -37,7 +38,7 @@
 }
 
 .day:nth-of-type(7n){
-    border-right: 0.2vw solid #bbb;
+    border-right: 0.1vw solid #bbb;
 }
 
 .day:nth-of-type(7n+1){
@@ -49,8 +50,8 @@
 }
 
 .day{
-    border-left: 0.1vw dashed #ddd;
-    border-right: 0.1vw dashed #ddd;
+    border-left: 0.05vw dashed #ddd;
+    border-right: 0.05vw dashed #ddd;
 
     width:100%;
 }
@@ -77,12 +78,16 @@
 
 .item{
     position: absolute;
-    border-radius: 1.5vh;
-    font-size: 2vh;
     text-align: center;
-    line-height:3vh;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
     color: white;
     height:auto;
+
+    padding-left: 1vw;
+    padding-right: 1vw;
+    box-sizing: border-box;
 }
 
 .events{
