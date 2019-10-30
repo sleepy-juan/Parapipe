@@ -36,19 +36,19 @@ if (dEnd != dStart) {
 
 //----------------------------------------------------------------------------------------------------
 // Items
+var lines =0;
 
 data.items.forEach((item, index) => {
     const nLeft = Math.max((new Date(item.start) - new Date(data.start)) / (1000 * 60 * 60 * 24), 0);
     const nRight = (new Date(item.end) - new Date(data.start)) / (1000 * 60 * 60 * 24);
 
     const nDuration = Math.min(nRight - nLeft, nDays - nLeft);
-
+    
     const strStyle = `
         width: calc(100% / ${nDays} * ${nDuration}); 
-        height: 3vh;
-        line-height: 3vh;
-        left: calc(100% / ${nDays} * ${nLeft} + 2px);
-        top: calc(4vh * ${index} - ${data.items.length * 4}vh);
+        
+        left: calc(100% / ${nDays} * ${nLeft} + 0.2vw);
+        top: calc(4vh * ${index} - ${data.items.length}*4vh);
         background-color: #0000ff80;
         ${nRight >= nDays ? `border-top-right-radius: 0; border-bottom-right-radius: 0;` : ""}
         ${new Date(item.start) < new Date(data.start) ? `border-top-left-radius: 0; border-bottom-left-radius: 0;` : ""}
@@ -59,6 +59,7 @@ data.items.forEach((item, index) => {
             ${item.label}
         </div>
     `)
+    
 })
 
 //----------------------------------------------------------------------------------------------------
@@ -66,7 +67,7 @@ data.items.forEach((item, index) => {
 
 data.events.forEach(event => {
     const nDayPassed = (dEnd - new Date(event.date)) / (1000 * 60 * 60 * 24);
-    const strStyle = `color: #0000ff; left: calc(100% / ${nDays} * ${nDayPassed}); top: calc(1vh)`;
+    const strStyle = `color: #0000ff; left: calc(100.2% / ${nDays} * ${nDayPassed}); top: calc(1vh)`;
     $(".events").append(`
         <div class="event" style="${strStyle}">
             &#9733
