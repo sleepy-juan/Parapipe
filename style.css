@@ -65,8 +65,15 @@
 .item{
     position: absolute;
     text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
     color: white;
     height:auto;
+
+    padding-left: 1vw;
+    padding-right: 1vw;
+    box-sizing: border-box;
 }
 
 .events{

@@ -11,6 +11,7 @@ const ITEM_COLORS = [
 const GAP_ITEM_ELEMENT = 0.5;
 const GAP_ITEM_TYPE = 1;
 const ITEM_HEIGHT = 3;
+const ITEM_FONT_SIZE = ITEM_HEIGHT / 2;
 
 //----------------------------------------------------------------------------------------------------
 // Preprocessing
@@ -116,7 +117,7 @@ Object.keys(itemGroups).forEach(type => {
             background-color: ${itemGroups[item.type].color};
             line-height:${ITEM_HEIGHT}vh;
             border-radius: ${ITEM_HEIGHT / 2}vh;
-            font-size: ${ITEM_HEIGHT / 3 * 2}vh;
+            font-size: ${ITEM_FONT_SIZE}vh;
             ${item.existsAfter ? `border-top-right-radius: 0; border-bottom-right-radius: 0;` : ""}
             ${item.xistsBefore ? `border-top-left-radius: 0; border-bottom-left-radius: 0;` : ""}
         `;
