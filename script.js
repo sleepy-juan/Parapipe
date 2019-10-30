@@ -1,6 +1,69 @@
 const data = aise;
 
 //----------------------------------------------------------------------------------------------------
+// CONSTANTS
+
+const ITEM_COLORS = [
+    "#00000080", "#0000ff80", "#03340380", "#8f00ff80", "#ff4d0080", "#00788080", "#ff000080",
+    "#572A00ab", "#FF005C91", "#2D8C0091", "#56640080", "#12004691", "#ACAF00ba",
+].sort(function () { return 0.5 - Math.random() });
+
+const GAP_ITEM_ELEMENT = 0.5;
+const GAP_ITEM_TYPE = 1;
+const ITEM_HEIGHT = 3;
+
+//----------------------------------------------------------------------------------------------------
+// Preprocessing
+
+const nDays = (new Date(data.end) - new Date(data.start)) / (1000 * 60 * 60 * 24);
+
+let itemGroups = {};
+let nContinued = 0;
+
+let parsedItems = data.items.map((item, id) => {
+    const left = Math.max((new Date(item.start) - new Date(data.start)) / (1000 * 60 * 60 * 24), 0);
+    const right = (new Date(item.end) - new Date(data.start)) / (1000 * 60 * 60 * 24);
+    const duration = Math.min(right - left, nDays - left);
+    const label = item.label;
+    const existsBefore = new Date(item.start) < new Date(data.start);
+    const existsAfter = right >= nDays;
+    const type = item.type;
+    let isContinued = item.continue == "true";
+    const isSeparated = item.separate;
+    let color = null;
+
+    let group = type;
+    if (isSeparated) {
+        if (Object.keys(itemGroups).includes(type)) {
+            let group_id = itemGroups[type]._assignedSeparation++;
+            group = `${type}@${group_id}`;
+            color = itemGroups[type].color;
+        }
+    }
+    // or, ignore separation
+
+    if (Object.keys(itemGroups).includes(group)) {
+        itemGroups[group].ids.push(id);
+    }
+    else {
+        isContinued = false;
+        itemGroups[group] = {
+            type,
+            ids: [id],
+            color: color ? color : ITEM_COLORS[Object.keys(itemGroups).length % ITEM_COLORS.length],
+            _assignedSeparation: 0
+        }
+    }
+
+    if (isContinued) nContinued++;
+
+    return {
+        id, left, right, duration, label, existsBefore, existsAfter, type, isContinued
+    }
+});
+const chartHeight = ((parsedItems.length - nContinued) * (ITEM_HEIGHT + GAP_ITEM_ELEMENT) + (Object.keys(itemGroups).length - 1) * GAP_ITEM_TYPE);
+
+//----------------------------------------------------------------------------------------------------
 // Title and Subtitle
 
 $("#title").text(data.title);
@@ -9,9 +72,7 @@ $("#subtitle").text(data.subtitle);
 //----------------------------------------------------------------------------------------------------
 // Days
 
-$(".days").css("height", `${data.items.length * 4}vh`)
-
-const nDays = (new Date(data.end) - new Date(data.start)) / (1000 * 60 * 60 * 24);
+$(".days").css("height", `${chartHeight}vh`)
 $(".days").html(`<div class="day"></div>`.repeat(nDays));
 
 //----------------------------------------------------------------------------------------------------
@@ -36,32 +97,40 @@ if (dEnd != dStart) {
 
 //----------------------------------------------------------------------------------------------------
 // Items
-var lines =0;
 
-data.items.forEach((item, index) => {
-    const nLeft = Math.max((new Date(item.start) - new Date(data.start)) / (1000 * 60 * 60 * 24), 0);
-    const nRight = (new Date(item.end) - new Date(data.start)) / (1000 * 60 * 60 * 24);
+let index = 0;
+let currentTop = -chartHeight;
+Object.keys(itemGroups).forEach(type => {
+    itemGroups[type].ids.forEach(id => {
+        const item = parsedItems[id];
 
-    const nDuration = Math.min(nRight - nLeft, nDays - nLeft);
-    
-    const strStyle = `
-        width: calc(100% / ${nDays} * ${nDuration}); 
-        
-        left: calc(100% / ${nDays} * ${nLeft} + 0.2vw);
-        top: calc(4vh * ${index} - ${data.items.length}*4vh);
-        background-color: #0000ff80;
-        ${nRight >= nDays ? `border-top-right-radius: 0; border-bottom-right-radius: 0;` : ""}
-        ${new Date(item.start) < new Date(data.start) ? `border-top-left-radius: 0; border-bottom-left-radius: 0;` : ""}
-    `;
+        if (item.isContinued) {
+            currentTop -= (ITEM_HEIGHT + GAP_ITEM_ELEMENT);
+        }
 
-    $(".items").append(`
-        <div class="item" style="${strStyle}">
-            ${item.label}
-        </div>
-    `)
-    
-})
+        const strStyle = `
+            width: calc(100% / ${nDays} * ${item.duration} - 0.1vw); 
+            
+            left: calc(100% / ${nDays} * ${item.left} + 0.15vw);
+            top: calc(${currentTop}vh);
+            background-color: ${itemGroups[item.type].color};
+            line-height:${ITEM_HEIGHT}vh;
+            border-radius: ${ITEM_HEIGHT / 2}vh;
+            font-size: ${ITEM_HEIGHT / 3 * 2}vh;
+            ${item.existsAfter ? `border-top-right-radius: 0; border-bottom-right-radius: 0;` : ""}
+            ${item.xistsBefore ? `border-top-left-radius: 0; border-bottom-left-radius: 0;` : ""}
+        `;
 
+        $(".items").append(`
+            <div class="item" style="${strStyle}">
+                ${item.label}
+            </div>
+        `);
+
+        currentTop += (ITEM_HEIGHT + GAP_ITEM_ELEMENT);
+    });
+    currentTop += GAP_ITEM_TYPE;
+});
 //----------------------------------------------------------------------------------------------------
 // Events
 
